@@ -41,7 +41,7 @@ function Testimonial() {
       <div className="md:flex hidden md:flex-row flex-col justify-center  md:gap-6 gap-18">
         {testimonials?.map((testimonial,index) => (
           <div key={index} className="md:w-[430px] rounded-xl border shadow-lg p-4 flex flex-col justify-between">
-            <i class="fa-solid fa-quote-left"></i>
+            <i className="fa-solid fa-quote-left"></i>
             <div className="ml-6">
               <h2 className="text-[#164F63] font-medium text-2xl">
                 {testimonial.title}
