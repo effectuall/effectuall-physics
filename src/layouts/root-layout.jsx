@@ -30,14 +30,18 @@ export default function RootLayout() {
 
           <nav id="nav-menu-container" className={`md:flex ${isMenuOpen ? 'block' : 'hidden'}`}>
             <ul className="nav-menu flex space-x-4">
-              <li className="menu-active">
-                <a href="#body" className=" text-cyan-200 hover:text-cyan-500">Home</a>
+            <li className="menu-active">
+                <a href="/about" className=" text-cyan-200 hover:text-cyan-500">About Us</a>
               </li>
+            <li className="menu-active">
+                <a href="/contact" className=" text-cyan-200 hover:text-cyan-500">Contact Us</a>
+              </li>
+              
               <li>
                 <a href="/dashboard" className=" text-cyan-200 hover:text-cyan-500">Dashboard</a>
               </li>
               <li>
-                <a href="/dashboard/scene" className=" text-cyan-200 hover:text-cyan-500">Scene</a>
+                <a href="/dashboard/scene" className=" text-cyan-200 hover:text-cyan-500">3D Scene</a>
               </li>
 
               <SignedIn>

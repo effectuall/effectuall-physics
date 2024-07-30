@@ -87,28 +87,28 @@ const Footer = () => {
           </div>
       <div className="flex md:flex-row flex-col justify-between md:items-center mt-2">
         <div className="flex md:flex-row flex-col md:items-center md:gap-8 gap-4 text-base leading-5 font-normal text-[#F3F4F6] md:mt-0 mt-4">
-          <Link href="/" className="text-[#fff] md:opacity-60 md:hover:opacity-100 md:hover:border-b-2 px-1 transition-all duration-75">Home</Link>
-          <Link href="#about" className="text-[#fff] md:opacity-60 md:hover:opacity-100 md:hover:border-b-2 px-1 transition-all duration-75">About Us</Link>
+          <Link to="/" className="text-[#fff] md:opacity-60 md:hover:opacity-100 md:hover:border-b-2 px-1 transition-all duration-75">Home</Link>
+          <Link to="/about" className="text-[#fff] md:opacity-60 md:hover:opacity-100 md:hover:border-b-2 px-1 transition-all duration-75">About Us</Link>
           <Link to="/dashboard" className="text-[#fff] md:opacity-60 md:hover:opacity-100 md:hover:border-b-2 px-1 transition-all duration-75">Dashboard</Link>
-          <Link href="#testimonials" className="text-[#fff] md:opacity-60 md:hover:opacity-100 md:hover:border-b-2 px-1 transition-all duration-75">Scene</Link>
+          <Link to="/dashboard/scene" className="text-[#fff] md:opacity-60 md:hover:opacity-100 md:hover:border-b-2 px-1 transition-all duration-75">3D Scene</Link>
           {/* <Link href="#contact" className="text-[#fff] md:opacity-60 md:hover:opacity-100 md:hover:border-b-2 px-1 transition-all duration-75">Contact</Link> */}
         </div>
         <div>
           <div className="flex flex-col md:items-end md:mt-0 mt-6">
             <div className="flex gap-3 items-center">
               Follow us on:
-              <Link href="https://www.linkedin.com/company/effectual-learning/" target="_blank">
+              <Link to="https://www.linkedin.com/company/effectual-learning/" target="_blank">
               <i className="fa-brands fa-linkedin-in"></i>
               </Link>
-              <Link href="https://twitter.com/effectualearner" target="_blank">
+              <Link to="https://twitter.com/effectualearner" target="_blank">
               <i className="fa-brands fa-x-twitter"></i>
               
               </Link>
-              <Link href="https://www.facebook.com/profile.php?id=61554729165510" target="_blank">
+              <Link to="https://www.facebook.com/profile.php?id=61554729165510" target="_blank">
               <i className="fa-brands fa-facebook-f"></i>
               </Link>
             </div>
-            <Link className="md:mt-0 mt-2" href="mailto:info@effectuall.com">
+            <Link className="md:mt-0 mt-2" to="mailto:info@effectuall.com">
               info@effectuall.com
             </Link>
           </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import files from "../assets/file.json"
+import Subjects from '../components/subjects';
 
 export default function ScenePage() {
     const [selectedFile, setSelectedFile] = useState('Optics_Compound_Microscope');
@@ -65,6 +66,9 @@ export default function ScenePage() {
           )}
         </div>
       ))}
+      <div>
+        <Subjects/>
+      </div>
             </div>
         </>
     );

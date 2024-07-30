@@ -17,19 +17,11 @@ const Hero = () => {
         <a href='/dashboard'><button className="text-center lf:px-10 md:px-6 px-4 bg-[#ffffff00] hover:bg-[#ffffff] hover:text-black md:py-3 py-2 font-medium lg:text-lg  border-2 border-white rounded-3xl">
           Try Simulations
         </button></a>
-        <a href="#"><button className="w-full lg:px-10 md:px-6 hover:shadow px-4 md:py-3 py-2 font-medium lg:text-lg bg-white hover:bg-gray-200 rounded-3xl text-black">
+        <a href="/about"><button className="w-full lg:px-10 md:px-6 hover:shadow px-4 md:py-3 py-2 font-medium lg:text-lg bg-white hover:bg-gray-200 rounded-3xl text-black">
           Learn More
         </button></a>
         </div>
-       
-        {/* <div className="flex justify-center md:justify-start">
-          <a href="https://apps.apple.com" className="mr-2">
-            <img src="/appstore.png" alt="Download on the App Store" className="h-12" />
-          </a>
-          <a href="https://play.google.com" className="ml-2">
-            <img src="/googleplay.png" alt="Get it on Google Play" className="h-12" />
-          </a>
-        </div> */}
+     
       </div>
       
     </div>

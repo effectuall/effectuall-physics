@@ -15,11 +15,15 @@
     "@clerk/clerk-react": "^5.2.10",
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@google/generative-ai": "^0.16.0",
+    "@react-three/drei": "^9.109.2",
+    "@react-three/fiber": "^8.16.8",
+    "@react-three/postprocessing": "^2.16.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-ga4": "^2.1.0",
     "react-router-dom": "^6.25.1",
-    "swiper": "^11.1.8"
+    "swiper": "^11.1.8",
+    "three": "^0.167.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
