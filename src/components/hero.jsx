@@ -14,7 +14,7 @@ const Hero = () => {
          Empowers your learning & training goals with personalized insights and real-world interactive 3D modules.
         </p>
         <div className="flex justify-center md:justify-start gap-5">
-        <a href='/dashboard'><button className="text-center lf:px-10 md:px-6 px-4 bg-[#ffffff00] hover:bg-[#ffffff] hover:text-black md:py-3 py-2 font-medium lg:text-lg  border-2 border-white rounded-3xl">
+        <a href='/simulations'><button className="text-center lf:px-10 md:px-6 px-4 bg-[#ffffff00] hover:bg-[#ffffff] hover:text-black md:py-3 py-2 font-medium lg:text-lg  border-2 border-white rounded-3xl">
           Try Simulations
         </button></a>
         <a href="/about"><button className="w-full lg:px-10 md:px-6 hover:shadow px-4 md:py-3 py-2 font-medium lg:text-lg bg-white hover:bg-gray-200 rounded-3xl text-black">

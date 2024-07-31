@@ -12,7 +12,7 @@ const WhyEffectuall = () => {
                         We introduce a teaching methodology that uses technology as access points for guiding learners in science & technology. The interactive features allow the educators and learners to interact with the immersive 3D environment and make the process of acquiring and sharing knowledge interesting and easier.
                     </p>
                     <div className="md:block flex justify-center md:mt-3">
-                        <button className="bg-cyan-600 text-white py-2 px-4 rounded hover:bg-cyan-700 mt-4">Get Started</button>
+                       <a href="/simulations"><button className="bg-cyan-600 text-white py-2 px-4 rounded hover:bg-cyan-700 mt-4">Get Started</button></a> 
                     </div>
                 </div>
 

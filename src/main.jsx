@@ -17,6 +17,7 @@ import SignUpPage from './routes/sign-up'
 import DashboardPage from './routes/dashboard'
 import ScenePage from './routes/dashboard.scene'
 import WebPage from './routes/webPage';
+import Simulations from './routes/simulations'
 import ChatBot from './components/chatBot';
 import AboutPage from './routes/about';
 
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <IndexPage /> },
       {path:"/chatbot", element:<ChatBot/>},
+      { path: "/simulations", element: <Simulations/> },
       { path: "/about", element: <AboutPage/> },
       { path: "/contact", element: <ContactPage /> },
       { path: "/sign-in/*", element: <SignInPage /> },
