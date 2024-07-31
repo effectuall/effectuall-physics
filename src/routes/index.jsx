@@ -7,6 +7,7 @@ import Footer from '../components/footer';
 import Testimonials from '../components/testimonials';
 import ChatBot from '../components/chatBot';
 import Popup from '../components/popup';
+import ContactForm from '../components/contactform';
 
 const Route = () => {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -20,6 +21,7 @@ const Route = () => {
       <WhyEffectuall/>
       <VirtualClass/>
       <Testimonials/>
+      <ContactForm/>
       <div>
       <div className="fixed bottom-5 right-5">
         <button onClick={toggleChatbot} className="bg-cyan-700 text-white p-3 rounded-full shadow-lg">
