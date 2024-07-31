@@ -36,7 +36,7 @@ const ContactForm = () => {
       <h2 className="text-2xl font-bold mb-6">Contact Us</h2>
       {submitted ? (
         <div className="text-center">
-          <p className="text-green-500">Thank you! We will get back to you soon.</p>
+          <p className="text-cyan-700">Thank you! We will get back to you soon.</p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} name="contact" data-netlify="true" netlify-honeypot="bot-field">
