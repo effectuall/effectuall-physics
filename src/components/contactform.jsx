@@ -44,14 +44,11 @@ const ContactForm = () => {
       .catch((error) => alert(error));
   };
   
-  document
-    .querySelector("form")
-    .addEventListener("submit", handleSubmit);
   
   return (
     <div className="max-w-md mx-auto bg-white p-8 mt-12 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-6">Contact Us</h2>
-      <form name="contact" method="POST" data-netlify="true" onSubmit={handleSubmit}>
+      {/* <form name="contact" method="POST" data-netlify="true" onSubmit={handleSubmit}>
         <input type="hidden" name="form-name" value="contact" />
         <p className="mb-4">
           <label className="block text-sm font-medium mb-2" htmlFor="name">Name <input
@@ -110,8 +107,8 @@ const ContactForm = () => {
         <p>
           <button type="submit" className="w-full bg-cyan-600  hover:bg-cyan-700 text-white p-2 rounded-md">Send</button>
         </p>
-      </form>
-      {/* <form name="contact" method="POST" data-netlify="true">
+      </form> */}
+      <form name="contact" method="POST" data-netlify="true"  onSubmit={handleSubmit}>
 
         <p>
           <label htmlFor='name' className="block text-sm font-medium mb-2">Your Name: 
@@ -130,7 +127,7 @@ const ContactForm = () => {
         <p>
           <button type="submit">Send</button>
         </p>
-      </form> */}
+      </form>
 
     </div>
   );
