@@ -92,7 +92,7 @@ const ContactForm = () => {
           <button type="submit" className="w-full bg-cyan-600  hover:bg-cyan-700 text-white p-2 rounded-md">Send</button>
         </p>
       </form> */}
-      <form name="contact" method="POST" data-netlify="true">
+      <form name="contact" method="POST" netlify>
         <input type="hidden" name="form-name" value="contact" />
 
         <p>

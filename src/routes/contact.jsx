@@ -6,6 +6,7 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { useGLTF, Stage, Grid, Html, Environment, OrbitControls, Billboard, Text, Loader } from '@react-three/drei'
 import { EffectComposer, Bloom, ToneMapping } from '@react-three/postprocessing'
 import Footer from '../components/footer';
+import ContactForm from '../components/contactform';
 
 function Model({ click, value }) {
 
@@ -133,12 +134,12 @@ function Overlay() {
             </div>
             <div className="absolute bottom-0 left-0" >
                 <div className="text-sm text-bold text-white p-12 md:p-6 ">
-                 
+
                     <Link className="md:mt-0 mt-2" to="mailto:info@effectuall.com">
-                    <button className="grotesk w-full lg:px-10 md:px-6 hover:bg-gray-200 hover:shadow px-4 md:py-3 py-2 font-medium lg:text-lg bg-white rounded-3xl text-black"> info@effectuall.com</button>
-             
-            </Link>
-                   
+                        <button className="grotesk w-full lg:px-10 md:px-6 hover:bg-gray-200 hover:shadow px-4 md:py-3 py-2 font-medium lg:text-lg bg-white rounded-3xl text-black"> info@effectuall.com</button>
+
+                    </Link>
+
                 </div>
             </div>
 
@@ -154,46 +155,47 @@ export default function ContactPage() {
 
     return (
         <>
-          <div className="bg-white text-black min-h-screen">
-            <div className="bg-cyan-900 text-white">
-            
-                <div className="bg-gradient-to-r from-cyan-900 to-cyan-500 h-screen " >
-                    <Suspense fallback={null}>
-                        <Canvas flat shadows camera={{ position: [15, 10, 10], fov: 25 }}>
-                            <Stage intensity={0.05} environment="city" shadows={{ type: 'accumulative', bias: 4, intensity: Math.PI }} adjustCamera={false}>
-                                <Model value={0.48} click={clicked} />
-                            </Stage>
-                            <Grid renderOrder={-1} position={[0, 0, 0]} infiniteGrid cellSize={0.6} cellThickness={0.6} sectionSize={3.3} sectionThickness={1.5} sectionColor={[0.5, 0.5, 10]} fadeDistance={30} />
-                            <OrbitControls enablePan={true} enableZoom={false} target={[0, 2, 0]} />
+            <div className="bg-white text-black min-h-screen">
+                <div className="bg-cyan-900 text-white">
 
-                            <EffectComposer disableNormalPass>
-                                <Bloom luminanceThreshold={2} mipmapBlur />
-                                <ToneMapping />
-                            </EffectComposer>
-                        </Canvas>
-                    </Suspense>
-                    <Loader />
-                    <Overlay />
-                    <div className="absolute top-0 right-0" >
-                    
-                        <div className=" font-bold text-white mr-4 pt-36 px-10"  >
-                            <Link to="/dashboard" className='bg-cyan-600 p-2 rounded-full'>
-                            <i className="fa-solid fa-house"></i>
-                            </Link>
-                        </div>
-                        <div className="cursor-pointer font-bold text-white mr-4 pt-3 px-10" onClick={() => (setClicked(!clicked))} >
-                          <div className=' bg-cyan-600 p-2 rounded-full'>
-                          <i className="fa-solid fa-play"></i>
-                          </div>
-                       
+                    <div className="bg-gradient-to-r from-cyan-900 to-cyan-500 h-screen " >
+                        <Suspense fallback={null}>
+                            <Canvas flat shadows camera={{ position: [15, 10, 10], fov: 25 }}>
+                                <Stage intensity={0.05} environment="city" shadows={{ type: 'accumulative', bias: 4, intensity: Math.PI }} adjustCamera={false}>
+                                    <Model value={0.48} click={clicked} />
+                                </Stage>
+                                <Grid renderOrder={-1} position={[0, 0, 0]} infiniteGrid cellSize={0.6} cellThickness={0.6} sectionSize={3.3} sectionThickness={1.5} sectionColor={[0.5, 0.5, 10]} fadeDistance={30} />
+                                <OrbitControls enablePan={true} enableZoom={false} target={[0, 2, 0]} />
+
+                                <EffectComposer disableNormalPass>
+                                    <Bloom luminanceThreshold={2} mipmapBlur />
+                                    <ToneMapping />
+                                </EffectComposer>
+                            </Canvas>
+                        </Suspense>
+                        <Loader />
+                        <Overlay />
+                        <div className="absolute top-0 right-0" >
+
+                            <div className=" font-bold text-white mr-4 pt-36 px-10"  >
+                                <Link to="/dashboard" className='bg-cyan-600 p-2 rounded-full'>
+                                    <i className="fa-solid fa-house"></i>
+                                </Link>
+                            </div>
+                            <div className="cursor-pointer font-bold text-white mr-4 pt-3 px-10" onClick={() => (setClicked(!clicked))} >
+                                <div className=' bg-cyan-600 p-2 rounded-full'>
+                                    <i className="fa-solid fa-play"></i>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
+                    <ContactForm/>
                 </div>
+                <Footer />
+
             </div>
-            <Footer/>
-            
-        </div>
-    );
+            );
 
         </>
     );
