@@ -93,7 +93,7 @@ const ContactForm = () => {
         </p>
       </form> */}
       <form name="contact" method="POST" netlify>
-        <input type="hidden" name="form-name" value="contact" />
+        {/* <input type="hidden" name="form-name" value="contact" /> */}
 
         <p>
           <label htmlFor='name' className="block text-sm font-medium mb-2">Your Name: 
