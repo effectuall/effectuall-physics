@@ -14,41 +14,25 @@ const ContactForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   // Handle form submission logic (e.g., send data to server)
-  //   console.log('Form data submitted:', formData);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic (e.g., send data to server)
+    console.log('Form data submitted:', formData);
 
-  //   // Clear the form
-  //   setFormData({
-  //     name: '',
-  //     email: '',
-  //     institution: '',
-  //     phone: '',
-  //     message: ''
-  //   });
-  // };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-  
-    const myForm = event.target;
-    const formData = new FormData(myForm);
-    
-    fetch("/", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams(formData).toString(),
-    })
-      .then(() => console.log("Form successfully submitted"))
-      .catch((error) => alert(error));
-  };
-  
+    // Clear the form
+    setFormData({
+      name: '',
+      email: '',
+      institution: '',
+      phone: '',
+      message: ''
+    });
+  };  
   
   return (
     <div className="max-w-md mx-auto bg-white p-8 mt-12 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-6">Contact Us</h2>
-      {/* <form name="contact" method="POST" data-netlify="true" onSubmit={handleSubmit}>
+      <form name="contact" method="POST" data-netlify="true" onSubmit={handleSubmit}>
         <input type="hidden" name="form-name" value="contact" />
         <p className="mb-4">
           <label className="block text-sm font-medium mb-2" htmlFor="name">Name <input
@@ -107,22 +91,8 @@ const ContactForm = () => {
         <p>
           <button type="submit" className="w-full bg-cyan-600  hover:bg-cyan-700 text-white p-2 rounded-md">Send</button>
         </p>
-      </form> */}
-      <form name="contact" method="post">
-          <p>
-            <label>Your Name: <input type="text" name="name"/></label>
-          </p>
-          <p>
-            <label>Your Email: <input type="email" name="email"/></label>
-          </p>
-          <p>
-            <label>Message: <textarea name="message"></textarea></label>
-          </p>
-          <p>
-            <button type="submit">Send</button>
-          </p>
-        </form>,
-
+      </form>
+     
     </div>
   );
 };
