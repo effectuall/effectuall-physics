@@ -108,26 +108,20 @@ const ContactForm = () => {
           <button type="submit" className="w-full bg-cyan-600  hover:bg-cyan-700 text-white p-2 rounded-md">Send</button>
         </p>
       </form> */}
-      <form name="contact" method="POST" data-netlify="true"  onSubmit={handleSubmit}>
-
-        <p>
-          <label htmlFor='name' className="block text-sm font-medium mb-2">Your Name: 
-            <input type="text" name="name"  className="w-full p-2 border border-gray-300 rounded-md"/>
-            </label>
-        </p>
-        <p>
-          <label htmlFor='email' className="block text-sm font-medium mb-2">Your Email: 
-            <input type="email" name="email"  className="w-full p-2 border border-gray-300 rounded-md"/>
-            </label>
-        </p>
-
-        <p>
-          <label htmlFor='message' className="block text-sm font-medium mb-2">Message: <textarea name="message" className="w-full p-2 border border-gray-300 rounded-md"></textarea></label>
-        </p>
-        <p>
-          <button type="submit">Send</button>
-        </p>
-      </form>
+      <form name="contact" method="post">
+          <p>
+            <label>Your Name: <input type="text" name="name"/></label>
+          </p>
+          <p>
+            <label>Your Email: <input type="email" name="email"/></label>
+          </p>
+          <p>
+            <label>Message: <textarea name="message"></textarea></label>
+          </p>
+          <p>
+            <button type="submit">Send</button>
+          </p>
+        </form>,
 
     </div>
   );
