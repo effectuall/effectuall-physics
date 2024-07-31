@@ -1,68 +1,66 @@
 // components/ContactForm.jsx
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 
-class ContactForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { name: "", email: "", message: "", submitted: false };
-  }
+const ContactForm = () => {
+  const [state, setState] = useState({ name: "", email: "", message: "", submitted: false });
 
-  encode = (data) => {
+  const encode = (data) => {
     return Object.keys(data)
       .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
       .join("&");
-  }
+  };
 
-  handleSubmit = e => {
+  const handleSubmit = e => {
     fetch("/", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: this.encode({ "form-name": "contact", ...this.state })
+      body: encode({ "form-name": "contact", ...state })
     })
       .then(() => {
-        this.setState({ name: "", email: "", message: "", submitted: true });
+        setState({ name: "", email: "", message: "", submitted: true });
       })
       .catch(error => alert(error));
 
     e.preventDefault();
   };
 
-  handleChange = e => this.setState({ [e.target.name]: e.target.value });
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setState(prevState => ({ ...prevState, [name]: value }));
+  };
 
-  render() {
-    const { name, email, message, submitted } = this.state;
-    
-    return (
-      <div>
-        {submitted ? (
-          <div>
-            <p>Thank you! We will get back to you soon.</p>
-          </div>
-        ) : (
-          <form onSubmit={this.handleSubmit} name="contact" data-netlify="true" netlify-honeypot="bot-field">
-            <p>
-              <label>
-                Your Name: <input type="text" name="name" value={name} onChange={this.handleChange} />
-              </label>
-            </p>
-            <p>
-              <label>
-                Your Email: <input type="email" name="email" value={email} onChange={this.handleChange} />
-              </label>
-            </p>
-            <p>
-              <label>
-                Message: <textarea name="message" value={message} onChange={this.handleChange} />
-              </label>
-            </p>
-            <p>
-              <button type="submit">Send</button>
-            </p>
-          </form>
-        )}
-      </div>
-    );
-  }
-}
+  const { name, email, message, submitted } = state;
+
+  return (
+    <div>
+      {submitted ? (
+        <div>
+          <p>Thank you! We will get back to you soon.</p>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} name="contact" data-netlify="true" netlify-honeypot="bot-field">
+          <p>
+            <label>
+              Your Name: <input type="text" name="name" value={name} onChange={handleChange} />
+            </label>
+          </p>
+          <p>
+            <label>
+              Your Email: <input type="email" name="email" value={email} onChange={handleChange} />
+            </label>
+          </p>
+          <p>
+            <label>
+              Message: <textarea name="message" value={message} onChange={handleChange} />
+            </label>
+          </p>
+          <p>
+            <button type="submit">Send</button>
+          </p>
+        </form>
+      )}
+    </div>
+  );
+};
 
 export default ContactForm;
