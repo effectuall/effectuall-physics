@@ -61,7 +61,7 @@ export default function RootLayout() {
           </div>
         </div>
       </header>
-      <main className="h-screen min-h-screen items-center text-center">
+      <main className="bg-slate-50 items-center text-center ">
         <Outlet />
 
       </main>

@@ -90,6 +90,11 @@ You should end with asking if they have any follow up question on the topic.`;
 
         fetchData();
     };
+    const handleImageUpload = (event) => {
+        const selectedFile = event.target.files[0];
+        // ... further processing
+        console.log("further processing", selectedFile)
+      }
     return (
         <div className="container">
             <div className="container p-6 bg-gray-100 rounded-lg shadow-lg mx-auto md:w-3/4 w-full">
@@ -136,6 +141,16 @@ You should end with asking if they have any follow up question on the topic.`;
                                 onChange={(e) => setInput(e.target.value)}
                                 placeholder="Type your question here..."
                             />
+                        </div>
+                        <div className="w-full mb-4">
+                            <input
+                                type="text"
+                                className="w-full p-2 border rounded"
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                placeholder="Type your question here..."
+                            />
+                            <input type="file" accept="image/*" className="w-full p-2 border rounded mt-2" onChange={handleImageUpload} />
                         </div>
                         <div className="flex justify-end w-full">
                             <button type="submit" className="btn btn-primary bg-cyan-600 text-white py-2 px-4 rounded hover:bg-cyan-700">
