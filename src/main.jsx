@@ -22,17 +22,17 @@ import ChatBot from './components/chatBot';
 import AboutPage from './routes/about';
 
 // Initialize Google Analytics
-const trackingId = 'G-8Q7GMVMJT7'; // Replace with your Google Analytics tracking ID G-8Q7GMVMJT7
-ReactGA.initialize(trackingId);
+// const trackingId = 'G-8Q7GMVMJT7'; // Replace with your Google Analytics tracking ID G-8Q7GMVMJT7
+// ReactGA.initialize(trackingId);
 
 const router = createBrowserRouter([
   {
     element: <RootLayout />,
     children: [
       { path: "/", element: <IndexPage /> },
-      {path:"/chatbot", element:<ChatBot/>},
-      { path: "/simulations", element: <Simulations/> },
-      { path: "/about", element: <AboutPage/> },
+      { path: "/chatbot", element: <ChatBot /> },
+      { path: "/simulations", element: <Simulations /> },
+      { path: "/about", element: <AboutPage /> },
       { path: "/contact", element: <ContactPage /> },
       { path: "/sign-in/*", element: <SignInPage /> },
       { path: "/sign-up/*", element: <SignUpPage /> },
@@ -42,7 +42,7 @@ const router = createBrowserRouter([
         children: [
           { path: "/dashboard", element: <DashboardPage /> },
           { path: "/dashboard/scene", element: <ScenePage /> },
-          {path:"/dashboard/webpage/:url", element:<WebPage/>}
+          { path: "/dashboard/webpage/:url", element: <WebPage /> }
         ]
       }
     ]
@@ -50,9 +50,9 @@ const router = createBrowserRouter([
 ])
 
 // Log page views to Google Analytics
-router.subscribe((location) => {
-  ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
-});
+// router.subscribe((location) => {
+//   ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
+// });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

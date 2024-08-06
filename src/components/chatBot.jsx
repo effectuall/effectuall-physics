@@ -5,11 +5,12 @@ import {
     HarmBlockThreshold,
 } from "@google/generative-ai";
 import { FaMicrophone, FaMicrophoneSlash, FaPlay, FaPause } from 'react-icons/fa';
+import list from '../assets/tags.json'
 // import './App.css';
 
 const ChatBot = () => {
     const [loading, setLoading] = useState(false);
-    const [apiData, setApiData] = useState({});
+    const [apiData, setApiData] = useState([]);
     const [grade, setGrade] = useState("");
     const [input, setInput] = useState('');
     const [subject, setSubject] = useState("");
@@ -54,7 +55,7 @@ const ChatBot = () => {
     
       - subject: here list the subject for the STEM topic
       - topic: here list the topic from STEM field which matches to the question.
-      - subtopic: here list all keywords related to this topic and question
+      - keywords: here list all keywords related to this topic and question
       - explain: here list appropriate give answer/explanation for the question asked.
       - follow up: suggest possible home experiment which student can perform safely or want to dwell deeper into the area of related topics or else ask if they have any other questions.
       If ${grade} & ${subject} are not selected prompt to select them and give answer to the point and make it interesting and understandable by a 5th grade student.
@@ -65,7 +66,7 @@ const ChatBot = () => {
           "grade": "${grade}",
           "subject": "${subject}",
           "topic": [],
-          "subtopic": [],
+          "keywords": [],
           "explain": "",
           "followUp": ""
         }]
@@ -92,7 +93,7 @@ const ChatBot = () => {
             const explainText = responseObject.answer[0].explain;
             const followUpText = responseObject.answer[0].followUp;
 
-            setApiData({ explain: explainText, followUp: followUpText });
+            setApiData({ topic: responseObject.answer[0].topic, keywords: responseObject.answer[0].keywords });
 
             const botMessage = { type: 'bot', text: explainText };
             setChatHistory((prev) => [...prev, botMessage]);
@@ -119,7 +120,7 @@ const ChatBot = () => {
         setFollowUpText(followUpText); // Set follow-up text to be used later
         speakNext(); // Start with the explanation
     };
-
+    console.log(apiData)
     const speakNext = () => {
         if (speechQueue.length === 0) {
             setIsPlaying(false);
@@ -205,6 +206,67 @@ const ChatBot = () => {
         fetchData();
     };
 
+    const renderKeywords = (data) => {
+        console.log(apiData.topic)
+        let A = apiData.topic
+        let B = apiData.keywords
+        let words = []
+        for (let i = 0; i < A.length; i++) {
+            words.push(A[i])
+        }
+        for (let i = 0; i < B.length; i++) {
+            words.push(B[i])
+        }
+
+        let result = {};
+        words.forEach(item => {
+            for (let key in list) {
+                if (list[key].includes(item)) {
+                    if (!result[key]) {
+                        result[key] = { count: 0, items: [] };
+                    }
+                    result[key].count++;
+                    result[key].items.push(item);
+                }
+            }
+        });
+
+        console.log(result);
+        // Convert result object to an array of entries and sort by count in descending order
+        let sortedResults = Object.entries(result).sort((a, b) => b[1].count - a[1].count);
+        console.log(sortedResults);
+        return (
+            <>
+                <div>
+                    <h1>Sorted Results</h1>
+                    <div className="container p-6 bg-gray-100 rounded-lg shadow-lg mx-auto md:w-3/4 w-full">
+                        <h2 className="text-xl font-bold mb-2">Topics</h2>
+                        <ul className="list-disc pl-5 mb-4">
+                            {data.topic.map((item, index) => (
+                                <li key={index}>{item}</li>
+                            ))}
+                        </ul>
+                        <h2 className="text-xl font-bold mb-2">Keywords</h2>
+                        <ul className="list-disc pl-5">
+                            {data.keywords.map((item, index) => (
+                                <li key={index}>{item}</li>
+                            ))}
+                        </ul>
+                    </div>
+                    {/* <ul>
+                        {apiData.map(([key, value]) => (
+                            <li key={key} className="px-4 py-2">mmm,
+                                <button
+                                    className="bg-indigo-600 px-3 py-1 rounded-full  text-xl"
+                                    onClick={() => (window.open(`https://effectuall.github.io/Simulations/${key}`, '_blank'))}>{key}</button>: {value.count} items
+
+                            </li>
+                        ))}
+                    </ul> */}
+                </div>
+            </>
+        );
+    }
     return (
         <div className="container">
             <div className="container p-6 bg-gray-100 rounded-lg shadow-lg mx-auto md:w-3/4 w-full">
@@ -284,38 +346,41 @@ const ChatBot = () => {
                     {chatHistory.map((msg, index) => (
                         <div
                             key={index}
-                            className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'
-                                } mb-2`}
+                            className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'} mb-2`}
                         >
                             <div
                                 className={`p-2 rounded-lg shadow ${msg.type === 'user'
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-gray-300 text-black'
+                                    ? 'bg-blue-500 text-white'
+                                    : 'bg-gray-300 text-black'
                                     }`}
                             >
                                 {msg.text}
                             </div>
+
                         </div>
                     ))}
-                </div>
-                {showKnowMore && (
+                    {showKnowMore && (
+                        <button
+                            type="button"
+                            className=" px-6 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 mt-4 float-right"
+                            onClick={handleKnowMore}
+                        >
+                            Know More
+                        </button>
+                    )}
                     <button
                         type="button"
-                        className="px-6 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 mt-4"
-                        onClick={handleKnowMore}
+                        className="px-6 py-2 text-yellow-500 rounded-full bg-white-200 hover:text-yellow-600 mt-4 float-right"
+                        onClick={toggleSpeech}
                     >
-                        Know More
+                        {isPlaying ? <FaPause /> : <FaPlay />}
                     </button>
-                )}
-                <button
-                    type="button"
-                    className="px-6 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 mt-4"
-                    onClick={toggleSpeech}
-                >
-                    {isPlaying ? <FaPause /> : <FaPlay />} {isPlaying ? 'Pause' : 'Play'}
-                </button>
+                </div>
+
+                <div> {isPlaying ? renderKeywords(apiData) : <p>kkkk</p>}</div>
             </div>
         </div>
+
     );
 };
 
