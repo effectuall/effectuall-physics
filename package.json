@@ -23,7 +23,8 @@
     "react-ga4": "^2.1.0",
     "react-router-dom": "^6.25.1",
     "swiper": "^11.1.8",
-    "three": "^0.167.0"
+    "three": "^0.167.0",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
