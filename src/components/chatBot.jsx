@@ -10,7 +10,7 @@ import list from '../assets/tags.json'
 
 const ChatBot = () => {
     const [loading, setLoading] = useState(false);
-    const [apiData, setApiData] = useState([]);
+    const [apiData, setApiData] = useState(null);
     const [grade, setGrade] = useState("");
     const [input, setInput] = useState('');
     const [subject, setSubject] = useState("");
@@ -20,7 +20,30 @@ const ChatBot = () => {
     const [speechQueue, setSpeechQueue] = useState([]);
     const [showKnowMore, setShowKnowMore] = useState(false);
     const [followUpText, setFollowUpText] = useState("");
-
+    //AI prompt and settings
+    const converstion = `You are Effy, a friendly ${subject} tutor for ${grade} grade. Your student asks you about STEM related topics, you should answer to the point, as required for the students and based on the ${input}. In the follow up questions you may ask if they want to dwell deeper into the subjects and also help them in suggesting related experiments
+    
+    - subject: here list the subject for the STEM topic
+    - topic: here list the topic from STEM field which matches to the question in lowercase.
+    - subtopics: here list all possible keywords for websearch.
+    - keywords: here list combined list of topic & subtopics in lowercase.
+    - explain: here list appropriate give answer/explanation for the question asked.
+    - follow up: suggest possible home experiment which student can perform safely or want to dwell deeper into the area of related topics or else ask if they have any other questions.
+    If ${grade} & ${subject} are not selected prompt to select them and give answer to the point and make it interesting and understandable by a 5th grade student.
+    You should always respond with a JSON object with the following format:
+    {
+      "question": "${input}",
+      "answer": [{
+        "grade": "${grade}",
+        "subject": "${subject}",
+        "topic": [],
+        "subtopics":[],
+        "keywords": [],
+        "explain": "",
+        "followUp": ""
+      }]
+    }
+    You should end with asking if they have any follow up question on the topic.`;
     const genAI = new GoogleGenerativeAI("AIzaSyC_uaxr1z15BjeJ2x-vSdKnlBin5TV8I5I");
     const generationConfig = {
         temperature: 0.9,
@@ -28,7 +51,6 @@ const ChatBot = () => {
         topP: 1,
         maxOutputTokens: 2048,
     };
-
     const safetySettings = [
         {
             category: HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -48,37 +70,16 @@ const ChatBot = () => {
         },
     ];
 
+    //fetch data through Gemini API
     const fetchData = async () => {
         try {
             const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-            const prompt = `You are Effy, a friendly ${subject} tutor for ${grade} grade. Your student asks you about STEM related topics, you should answer to the point, as required for the students and based on the ${input}. In the follow up questions you may ask if they want to dwell deeper into the subjects and also help them in suggesting related experiments
-    
-      - subject: here list the subject for the STEM topic
-      - topic: here list the topic from STEM field which matches to the question.
-      - keywords: here list all keywords related to this topic and question
-      - explain: here list appropriate give answer/explanation for the question asked.
-      - follow up: suggest possible home experiment which student can perform safely or want to dwell deeper into the area of related topics or else ask if they have any other questions.
-      If ${grade} & ${subject} are not selected prompt to select them and give answer to the point and make it interesting and understandable by a 5th grade student.
-      You should always respond with a JSON object with the following format:
-      {
-        "question": "${input}",
-        "answer": [{
-          "grade": "${grade}",
-          "subject": "${subject}",
-          "topic": [],
-          "keywords": [],
-          "explain": "",
-          "followUp": ""
-        }]
-      }
-      You should end with asking if they have any follow up question on the topic.`;
-
+            const prompt = converstion;
             const chat = model.startChat({
                 generationConfig,
                 safetySettings,
                 history: [],
             });
-
             const result = await chat.sendMessage(prompt);
             const response = await result.response;
             const text = await response.text();
@@ -93,7 +94,7 @@ const ChatBot = () => {
             const explainText = responseObject.answer[0].explain;
             const followUpText = responseObject.answer[0].followUp;
 
-            setApiData({ topic: responseObject.answer[0].topic, keywords: responseObject.answer[0].keywords });
+            setApiData({ topic: responseObject.answer[0].topic, subtopics: responseObject.answer[0].subtopics, keywords: responseObject.answer[0].keywords });
 
             const botMessage = { type: 'bot', text: explainText };
             setChatHistory((prev) => [...prev, botMessage]);
@@ -120,7 +121,7 @@ const ChatBot = () => {
         setFollowUpText(followUpText); // Set follow-up text to be used later
         speakNext(); // Start with the explanation
     };
-    console.log(apiData)
+
     const speakNext = () => {
         if (speechQueue.length === 0) {
             setIsPlaying(false);
@@ -206,22 +207,14 @@ const ChatBot = () => {
         fetchData();
     };
 
-    const renderKeywords = (data) => {
-        console.log(apiData.topic)
-        let A = apiData.topic
-        let B = apiData.keywords
-        let words = []
-        for (let i = 0; i < A.length; i++) {
-            words.push(A[i])
-        }
-        for (let i = 0; i < B.length; i++) {
-            words.push(B[i])
-        }
-
+    //comparing the resulting keywords with the simulation tag file
+    const getSortedResults = (A, B) => {
         let result = {};
-        words.forEach(item => {
-            for (let key in list) {
-                if (list[key].includes(item)) {
+
+        A.forEach(item => {
+            for (let key in B) {
+                if (B[key].includes(item)) {
+                    console.log(item)
                     if (!result[key]) {
                         result[key] = { count: 0, items: [] };
                     }
@@ -230,43 +223,38 @@ const ChatBot = () => {
                 }
             }
         });
+        console.log(A, B)
+        return Object.entries(result).sort((a, b) => b[1].count - a[1].count);
+    };
 
-        console.log(result);
-        // Convert result object to an array of entries and sort by count in descending order
-        let sortedResults = Object.entries(result).sort((a, b) => b[1].count - a[1].count);
-        console.log(sortedResults);
+    const SortedResultsList = (A) => {
+        const sortedResults = getSortedResults(A, list);
+        function getName(file) {
+
+            const name = file.split('_');
+            name.shift();
+            return name.join('  ');
+
+        }
         return (
-            <>
-                <div>
-                    <h1>Sorted Results</h1>
-                    <div className="container p-6 bg-gray-100 rounded-lg shadow-lg mx-auto md:w-3/4 w-full">
-                        <h2 className="text-xl font-bold mb-2">Topics</h2>
-                        <ul className="list-disc pl-5 mb-4">
-                            {data.topic.map((item, index) => (
-                                <li key={index}>{item}</li>
-                            ))}
-                        </ul>
-                        <h2 className="text-xl font-bold mb-2">Keywords</h2>
-                        <ul className="list-disc pl-5">
-                            {data.keywords.map((item, index) => (
-                                <li key={index}>{item}</li>
-                            ))}
-                        </ul>
-                    </div>
-                    {/* <ul>
-                        {apiData.map(([key, value]) => (
-                            <li key={key} className="px-4 py-2">mmm,
-                                <button
-                                    className="bg-indigo-600 px-3 py-1 rounded-full  text-xl"
-                                    onClick={() => (window.open(`https://effectuall.github.io/Simulations/${key}`, '_blank'))}>{key}</button>: {value.count} items
+            <div>
+                <h1 className="font-bold">List of related SImulations</h1>
+                <div className="flex flex-wrap gap-1 justify-center md:justify-start">
+                    {sortedResults.map(([key, value]) => (
+                        <div key={key} >
 
-                            </li>
-                        ))}
-                    </ul> */}
+
+                            <button className="bg-cyan-600 hover:bg-cyan-700 px-3 py-1 rounded-full text-white/90 text-xs" onClick={() => (window.open(`https://effectuall.github.io/Simulations/${sortedResults[0][0]}`, '_blank'), console.log('pop'))}>
+                                {getName(key)}
+                            </button>
+
+                        </div>
+                    ))}
                 </div>
-            </>
+
+            </div>
         );
-    }
+    };
     return (
         <div className="container">
             <div className="container p-6 bg-gray-100 rounded-lg shadow-lg mx-auto md:w-3/4 w-full">
@@ -377,10 +365,9 @@ const ChatBot = () => {
                     </button>
                 </div>
 
-                <div> {isPlaying ? renderKeywords(apiData) : <p>kkkk</p>}</div>
+                <div>{apiData === null && (<p className="text-sm">List of related Simulations</p>)} {apiData != null && SortedResultsList(apiData.keywords)} </div>
             </div>
         </div>
-
     );
 };
 
