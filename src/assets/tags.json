@@ -150,7 +150,8 @@
         "periodic motion",
         "kinematics",
         "dynamics",
-        "mechanics"
+        "mechanics",
+        "simple harmonic motion"
     ],
     "Mechanics_Projectile_Motion": [
         "equation of motion",
@@ -202,7 +203,8 @@
         "gravitational force",
         "kinematics",
         "dynamics",
-        "mechanics"
+        "mechanics",
+        "simple harmonic motion"
     ],
     "Mechanics_Gravitation_Law": [
         "time period",
@@ -354,12 +356,14 @@
         "measure mass of irregular object",
         "hydraulic press",
         "variation of fluid velocity with height",
-        "torricellis law"
+        "torricellis law",
+        "thermodynamics"
     ],
     "Thermodynamics_Ideal_Gas_Equation": [
         "ideal gas equation",
         "boltzmann equation",
         "thermodynamic",
+        "thermodynamics",
         "pressure",
         "statistical mechanics",
         "equilibrium distribution",
@@ -374,6 +378,7 @@
         "pascal's law",
         "hydrostatics",
         "hydraulics",
+        "thermodynamics",
         "fluid mechanics",
         "pressure transmission",
         "fluid dynamics"
@@ -392,7 +397,8 @@
         "gas pressure",
         "gas temperature",
         "gas volume",
-        "gas behavior"
+        "gas behavior",
+        "thermodynamics"
     ],
     "Thermodynamics_Hot_Air_Balloon": [
         "ideal gas equation",
@@ -405,7 +411,8 @@
         "gas expansion",
         "thermal convection",
         "aerostatics",
-        "aeronautics"
+        "aeronautics",
+        "thermodynamics"
     ],
     "Quantum_Photoelectric_Effect": [
         "quantum effect",

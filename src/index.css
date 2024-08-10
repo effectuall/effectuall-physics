@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -47,12 +46,15 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #d0e6f0;
 }
+
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  /* outline: 4px auto -webkit-focus-ring-color; */
+  background-color: #ced4da;
 }
 
 
@@ -79,15 +81,124 @@ button:focus-visible {
   object-fit: cover;
 }
 
+/* General Styles for the ChatBot Component */
+.chatbot-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+.chat-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+.chat-history {
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.message {
+  max-width: 80%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  position: relative;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.user {
+  background-color: #007bff;
+  color: #fff;
+  align-self: flex-end;
+  text-align: right;
+}
+
+.bot {
+  background-color: #e9ecef;
+  color: #212529;
+  align-self: flex-start;
+  text-align: left;
+}
+
+.message button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.message button svg {
+  vertical-align: middle;
+}
+
+/* Styles for the Chat Input Section */
+.chat-input {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.chat-input form {
+  display: flex;
+  width: 100%;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  margin-right: 10px;
+}
+
+.chat-input button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.chat-input button[disabled] {
+  background-color: #d6d6d6;
+  cursor: not-allowed;
+}
+
+/* Styles for the Know More Button */
+.know-more-btn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-color: #ffffff;
   }
+
   /* a:hover {
     color: #747bff;
   } */
- 
+
   button {
     background-color: #f9f9f9;
   }

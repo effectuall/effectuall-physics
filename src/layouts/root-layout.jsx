@@ -20,7 +20,7 @@ export default function RootLayout() {
       routerReplace={(to) => navigate(to, { replace: true })}
       publishableKey={PUBLISHABLE_KEY}
     >
-      <header id="header" className="bg-[#164F63] shadow-md">
+      <header id="header" className="bg-[#164F63] shadow-md ">
         <div className="container  mx-auto flex items-center justify-between p-4">
           <div id="logo" className="flex items-center">
             <h1 className="text-2xl font-bold">
@@ -30,20 +30,27 @@ export default function RootLayout() {
 
           <nav id="nav-menu-container" className={`md:flex ${isMenuOpen ? 'block' : 'hidden'}`}>
             <ul className="nav-menu flex space-x-4">
-            <li className="menu-active">
-                <a href="/about" className=" text-cyan-200 hover:text-cyan-500">About Us</a>
+              <li className="menu-active">
+                <a href="/about" className=" text-cyan-200 hover:text-cyan-500">About</a>
               </li>
-            <li className="menu-active">
-                <a href="/contact" className=" text-cyan-200 hover:text-cyan-500">Contact Us</a>
-              </li>
-              
-              <li>
-                <a href="/dashboard" className=" text-cyan-200 hover:text-cyan-500">Dashboard</a>
-              </li>
-              <li>
-                <a href="/dashboard/scene" className=" text-cyan-200 hover:text-cyan-500">3D Scene</a>
+              <li className="menu-active">
+                <a href="/contact" className=" text-cyan-200 hover:text-cyan-500">Contact</a>
               </li>
 
+              <li>
+                <a href="/simulations" className=" text-cyan-200 hover:text-cyan-500">Simulations</a>
+              </li>
+
+              <SignedIn>
+                <li>
+                  <a href="/dashboard" className=" text-cyan-200 hover:text-cyan-500">Dashboard</a>
+                </li>
+              </SignedIn>
+              <SignedOut>
+                <li>
+                  <a href="/theory" className=" text-cyan-200 hover:text-cyan-500">Theory</a>
+                </li>
+              </SignedOut>
               <SignedIn>
                 <UserButton />
               </SignedIn>
@@ -61,7 +68,7 @@ export default function RootLayout() {
           </div>
         </div>
       </header>
-      <main className="bg-slate-50 items-center text-center ">
+      <main className="bg-slate-50 items-center text-center text-slate-900">
         <Outlet />
 
       </main>
