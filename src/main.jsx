@@ -20,6 +20,7 @@ import WebPage from './routes/webPage';
 import Simulations from './routes/simulations'
 import ChatBot from './components/chatBot';
 import AboutPage from './routes/about';
+import VisualPage from './routes/visualization';
 
 // Initialize Google Analytics
 // const trackingId = 'G-8Q7GMVMJT7'; // Replace with your Google Analytics tracking ID G-8Q7GMVMJT7
@@ -36,6 +37,7 @@ const router = createBrowserRouter([
       { path: "/contact", element: <ContactPage /> },
       { path: "/sign-in/*", element: <SignInPage /> },
       { path: "/sign-up/*", element: <SignUpPage /> },
+      { path: "/visualpage/:url", element: <VisualPage /> },
       {
         element: <DashboardLayout />,
         path: "dashboard",

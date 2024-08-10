@@ -6,20 +6,19 @@ import {
 } from "@google/generative-ai";
 import { FaMicrophone, FaMicrophoneSlash, FaPlay, FaPause } from 'react-icons/fa';
 import list from '../assets/tags.json'
+import ReactMarkdown from 'react-markdown'
 // import './App.css';
 
 const ChatBot = () => {
     const [loading, setLoading] = useState(false);
     const [apiData, setApiData] = useState(null);
-    const [grade, setGrade] = useState("");
-    const [input, setInput] = useState('');
-    const [subject, setSubject] = useState("");
+    const [grade, setGrade] = useState("8");
+    const [input, setInput] = useState("");
+    const [subject, setSubject] = useState('Physics');
     const [chatHistory, setChatHistory] = useState([]);
     const [recording, setRecording] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [speechQueue, setSpeechQueue] = useState([]);
-    const [showKnowMore, setShowKnowMore] = useState(false);
-    const [followUpText, setFollowUpText] = useState("");
+    const [currentPlayingIndex, setCurrentPlayingIndex] = useState(null);
     //AI prompt and settings
     const converstion = `You are Effy, a friendly ${subject} tutor for ${grade} grade. Your student asks you about STEM related topics, you should answer to the point, as required for the students and based on the ${input}. In the follow up questions you may ask if they want to dwell deeper into the subjects and also help them in suggesting related experiments
     
@@ -44,7 +43,8 @@ const ChatBot = () => {
       }]
     }
     You should end with asking if they have any follow up question on the topic.`;
-    const genAI = new GoogleGenerativeAI("AIzaSyC_uaxr1z15BjeJ2x-vSdKnlBin5TV8I5I");
+    const AI_key = import.meta.env.VITE_GEMINI_API_KEY;
+    const genAI = new GoogleGenerativeAI(AI_key);
     const generationConfig = {
         temperature: 0.9,
         topK: 1,
@@ -96,11 +96,11 @@ const ChatBot = () => {
 
             setApiData({ topic: responseObject.answer[0].topic, subtopics: responseObject.answer[0].subtopics, keywords: responseObject.answer[0].keywords });
 
+            const userMessage = { type: 'user', text: input };
             const botMessage = { type: 'bot', text: explainText };
-            setChatHistory((prev) => [...prev, botMessage]);
+            setChatHistory((prev) => [userMessage, botMessage, ...prev]);
             setLoading(false);
             setInput("");
-            queueSpeech(explainText, followUpText); // Pass both explain and follow-up to the queue
 
         } catch (error) {
             console.error('Error fetching data:', error.message || error);
@@ -108,57 +108,8 @@ const ChatBot = () => {
         }
     };
 
-    const queueSpeech = (explainText, followUpText) => {
-        if (!explainText || typeof explainText !== 'string') {
-            console.error('Invalid message for speech synthesis');
-            return;
-        }
-
-        window.speechSynthesis.cancel();
-
-        const messages = [explainText];
-        setSpeechQueue(messages);
-        setFollowUpText(followUpText); // Set follow-up text to be used later
-        speakNext(); // Start with the explanation
-    };
-
-    const speakNext = () => {
-        if (speechQueue.length === 0) {
-            setIsPlaying(false);
-            return;
-        }
-
-        const text = speechQueue.shift();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.rate = 1;
-        utterance.pitch = 1;
-
-        utterance.onstart = () => setIsPlaying(true);
-        utterance.onend = () => {
-            setIsPlaying(false);
-            if (speechQueue.length === 0) {
-                // When speech queue is empty, show the "Know More" button
-                setShowKnowMore(true);
-            } else {
-                speakNext();
-            }
-        };
-
-        window.speechSynthesis.speak(utterance);
-    };
-
-    const handleKnowMore = () => {
-        if (followUpText) {
-            const followUpMessage = { type: 'bot', text: followUpText };
-            setChatHistory((prev) => [...prev, followUpMessage]);
-            setShowKnowMore(false); // Hide the button after clicking
-            queueSpeech(followUpText); // Play the follow-up text
-        }
-    };
-
-    const toggleSpeech = () => {
-        if (window.speechSynthesis.speaking) {
+    const toggleSpeech = (index) => {
+        if (currentPlayingIndex === index) {
             if (window.speechSynthesis.paused) {
                 window.speechSynthesis.resume();
                 setIsPlaying(true);
@@ -166,8 +117,22 @@ const ChatBot = () => {
                 window.speechSynthesis.pause();
                 setIsPlaying(false);
             }
-        } else if (speechQueue.length > 0) {
-            speakNext();
+        } else {
+            window.speechSynthesis.cancel();
+            setCurrentPlayingIndex(index);
+            const text = chatHistory[index].text;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 1;
+            utterance.pitch = 1;
+
+            utterance.onstart = () => setIsPlaying(true);
+            utterance.onend = () => {
+                setIsPlaying(false);
+                setCurrentPlayingIndex(null);
+            };
+
+            window.speechSynthesis.speak(utterance);
             setIsPlaying(true);
         }
     };
@@ -202,7 +167,8 @@ const ChatBot = () => {
         e.preventDefault();
         if (!input.trim()) return;
         const userMessage = { type: 'user', text: input };
-        setChatHistory((prev) => [...prev, userMessage]);
+        // setChatHistory((prev) =>
+        //     [userMessage, ...prev]); // Newest messages at the top
         setLoading(true);
         fetchData();
     };
@@ -214,7 +180,7 @@ const ChatBot = () => {
         A.forEach(item => {
             for (let key in B) {
                 if (B[key].includes(item)) {
-                    console.log(item)
+                    // console.log(item)
                     if (!result[key]) {
                         result[key] = { count: 0, items: [] };
                     }
@@ -223,7 +189,7 @@ const ChatBot = () => {
                 }
             }
         });
-        console.log(A, B)
+        // console.log(A, B)
         return Object.entries(result).sort((a, b) => b[1].count - a[1].count);
     };
 
@@ -238,15 +204,16 @@ const ChatBot = () => {
         }
         return (
             <div>
-                <h1 className="font-bold">List of related SImulations</h1>
-                <div className="flex flex-wrap gap-1 justify-center md:justify-start">
+                <h1 className="font-bold">List of related Simulations</h1>
+                <div className="flex flex-wrap gap-1 justify-center">
                     {sortedResults.map(([key, value]) => (
                         <div key={key} >
 
+                            <a href={`/visualpage/:${key}`} rel="noopener noreferrer" target=" _blank" className="bg-cyan-600 hover:bg-cyan-700 px-3  rounded-full text-white/90 text-xs">{getName(key)}</a>
 
-                            <button className="bg-cyan-600 hover:bg-cyan-700 px-3 py-1 rounded-full text-white/90 text-xs" onClick={() => (window.open(`https://effectuall.github.io/Simulations/${sortedResults[0][0]}`, '_blank'), console.log('pop'))}>
+                            {/* <button className="bg-cyan-600 hover:bg-cyan-700 px-3 py-1 rounded-full text-white/90 text-xs" onClick={() => (window.open(`https://effectuall.github.io/Simulations/${sortedResults[0][0]}`, '_blank'), console.log('pop'))}>
                                 {getName(key)}
-                            </button>
+                            </button> */}
 
                         </div>
                     ))}
@@ -256,116 +223,100 @@ const ChatBot = () => {
         );
     };
     return (
-        <div className="container">
-            <div className="container p-6 bg-gray-100 rounded-lg shadow-lg mx-auto md:w-3/4 w-full">
-                <h1 className="text-2xl font-bold mb-4 text-center">THE STEM MASTER</h1>
-                <div className="mb-5">
-                    <form onSubmit={handleSubmit} className="flex flex-col items-center">
-                        <div className="flex flex-col md:flex-row w-full md:space-x-4 mb-4">
-                            <div className="flex-1">
-                                <label htmlFor="grade" className="form-label block mb-1">
-                                    Grade
-                                </label>
-                                <select
-                                    className="form-select w-full p-2 border rounded"
-                                    id="grade"
-                                    value={grade}
-                                    onChange={(e) => setGrade(e.target.value)}
-                                >
-                                    <option value="">Select Grade</option>
-                                    <option value="8">8, 9 & 10</option>
-                                    <option value="10">11 & 12</option>
-                                </select>
-                            </div>
-                            <div className="flex-1">
-                                <label htmlFor="subject" className="form-label block mb-1">
-                                    Subject
-                                </label>
-                                <select
-                                    className="form-select w-full p-2 border rounded"
-                                    id="subject"
-                                    value={subject}
-                                    onChange={(e) => setSubject(e.target.value)}
-                                >
-                                    <option value="">Select Subject</option>
-                                    <option value="Mathematics">Mathematics</option>
-                                    <option value="Physics">Physics</option>
-                                    <option value="Chemistry">Chemistry</option>
-                                    <option value="Biology">Biology</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className="flex flex-col w-full mb-4">
-                            <label htmlFor="question" className="form-label block mb-1">
-                                Question
-                            </label>
-                            <div className="relative w-full">
-                                <input
-                                    type="text"
-                                    className="form-input w-full p-2 border rounded"
-                                    id="question"
-                                    placeholder="Type your question"
-                                    value={input}
-                                    onChange={(e) => setInput(e.target.value)}
-                                />
-                                <button
-                                    type="button"
-                                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                                    onClick={startDictation}
-                                >
-                                    {recording ? (
-                                        <FaMicrophoneSlash className="text-red-500" />
-                                    ) : (
-                                        <FaMicrophone className="text-green-500" />
-                                    )}
+        <div className="container mx-auto md:w-3/4 w-full p-6 bg-gray-100 rounded-lg shadow-lg flex flex-col h-[650px]">
+            <h1 className="text-2xl font-bold mb-4 text-center">THE STEM MASTER</h1>
+            <div className="chat-history p-4 bg-white rounded shadow flex-1 overflow-y-auto">
+                {chatHistory.map((msg, index) => (
+                    <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'} mb-2`}>
+                        <div className={`flex p-2 rounded-lg shadow ${msg.type === 'user' ? 'bg-cyan-700 text-white' : 'bg-gray-300 text-black'}`}>
+                            <ReactMarkdown>{msg.text}</ReactMarkdown>
+                            {msg.type === 'bot' && (
+                                <button onClick={() => toggleSpeech(index)} className="bg-gray-300 ml-2 ">
+                                    {isPlaying && currentPlayingIndex === index ? <FaPause /> : <FaPlay />}
                                 </button>
-                            </div>
+                            )}
                         </div>
-                        <button
-                            type="submit"
-                            className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                            disabled={loading}
-                        >
-                            {loading ? "Loading..." : "Ask"}
-                        </button>
-                    </form>
-                </div>
-                <div className="chat-history p-4 bg-white rounded shadow">
-                    {chatHistory.map((msg, index) => (
-                        <div
-                            key={index}
-                            className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'} mb-2`}
-                        >
-                            <div
-                                className={`p-2 rounded-lg shadow ${msg.type === 'user'
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-gray-300 text-black'
-                                    }`}
+                    </div>
+                ))}
+
+            </div>
+            <div className="text-center items-center">
+                {apiData === null ? (
+                    <p className="text-sm">List of related Simulations</p>
+                ) : (
+                    SortedResultsList(apiData.keywords)
+                )}
+            </div>
+            <div className="input-area p-4 bg-gray-100 rounded-t-lg shadow-lg flex-none">
+                <form onSubmit={handleSubmit} className="flex flex-col items-center">
+                    <div className="flex flex-col md:flex-row w-full md:space-x-4 mb-4">
+                        <div className="flex-1">
+                            <label htmlFor="grade" className="form-label block mb-1">
+                                Grade
+                            </label>
+                            <select
+                                className="form-select w-full p-2 border rounded"
+                                id="grade"
+                                value={grade}
+                                onChange={(e) => setGrade(e.target.value)}
                             >
-                                {msg.text}
-                            </div>
-
+                                <option value="">Select Grade</option>
+                                <option value="8">8, 9 & 10</option>
+                                <option value="10">11 & 12</option>
+                            </select>
                         </div>
-                    ))}
-                    {showKnowMore && (
-                        <button
-                            type="button"
-                            className=" px-6 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 mt-4 float-right"
-                            onClick={handleKnowMore}
-                        >
-                            Know More
-                        </button>
-                    )}
+                        <div className="flex-1">
+                            <label htmlFor="subject" className="form-label block mb-1">
+                                Subject
+                            </label>
+                            <select
+                                className="form-select w-full p-2 border rounded"
+                                id="subject"
+                                value={subject}
+                                onChange={(e) => setSubject(e.target.value)}
+                            >
+                                <option value="">Select Subject</option>
+                                <option value="Mathematics">Mathematics</option>
+                                <option value="Physics">Physics</option>
+                                <option value="Chemistry">Chemistry</option>
+                                <option value="Biology">Biology</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="flex flex-col w-full mb-4">
+                        <label htmlFor="question" className="form-label block mb-1">
+                            Question
+                        </label>
+                        <div className="relative w-full">
+                            <input
+                                type="text"
+                                className="form-input w-full p-2 border rounded"
+                                id="question"
+                                placeholder="Type your question"
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                            />
+                            <button
+                                type="button"
+                                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                                onClick={startDictation}
+                            >
+                                {recording ? (
+                                    <FaMicrophoneSlash className="text-red-500" />
+                                ) : (
+                                    <FaMicrophone className="text-green-500" />
+                                )}
+                            </button>
+                        </div>
+                    </div>
                     <button
-                        type="button"
-                        className="px-6 py-2 text-yellow-500 rounded-full bg-white-200 hover:text-yellow-600 mt-4 float-right"
-                        onClick={toggleSpeech}
+                        type="submit"
+                        className="px-6 py-2 bg-cyan-700 text-white rounded hover:bg-cyan-600"
+                        disabled={loading}
                     >
-                        {isPlaying ? <FaPause /> : <FaPlay />}
+                        {loading ? "Loading..." : "Ask"}
                     </button>
-                </div>
-
-                <div>{apiData === null && (<p className="text-sm">List of related Simulations</p>)} {apiData != null && SortedResultsList(apiData.keywords)} </div>
+                </form>
             </div>
         </div>
     );
