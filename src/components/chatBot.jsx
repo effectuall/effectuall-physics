@@ -1,112 +1,55 @@
-import React, { useState } from "react";
-import {
-    GoogleGenerativeAI,
-    HarmCategory,
-    HarmBlockThreshold,
-} from "@google/generative-ai";
-import { FaMicrophone, FaMicrophoneSlash, FaPlay, FaPause } from 'react-icons/fa';
-import list from '../assets/tags.json'
+//App.jsx
+import { useState } from "react";
+import { generateResponse } from "../api/effy";
 import ReactMarkdown from 'react-markdown'
-// import './App.css';
+import { FaMicrophone, FaMicrophoneSlash, FaPlay, FaPause, FaUpload, FaSearch, FaSpinner } from 'react-icons/fa';
+import list from '../assets/tags.json';
+import { IoStar, IoStarOutline } from "react-icons/io5";
+import { FaArrowsRotate, FaQ, FaRotateLeft } from "react-icons/fa6";
 
-const ChatBot = () => {
+function ChatBot() {
+    const statement = "Ask a STEM question, and AI will provide an answer and direct you to relevant 3D interactive modules."
     const [loading, setLoading] = useState(false);
-    const [apiData, setApiData] = useState(null);
     const [grade, setGrade] = useState("8");
-    const [input, setInput] = useState("");
-    const [subject, setSubject] = useState('Physics');
+    const [input, setInput] = useState('');
+    const [subject, setSubject] = useState("Physics");
     const [chatHistory, setChatHistory] = useState([]);
     const [recording, setRecording] = useState(false);
-    const [isPlaying, setIsPlaying] = useState(false);
+    const [apiData, setApiData] = useState(null);
     const [currentPlayingIndex, setCurrentPlayingIndex] = useState(null);
-    //AI prompt and settings
-    const converstion = `You are Effy, a friendly ${subject} tutor for ${grade} grade. Your student asks you about STEM related topics, you should answer to the point, as required for the students and based on the ${input}. In the follow up questions you may ask if they want to dwell deeper into the subjects and also help them in suggesting related experiments
-    
-    - subject: here list the subject for the STEM topic
-    - topic: here list the topic from STEM field which matches to the question in lowercase.
-    - subtopics: here list all possible keywords for websearch.
-    - keywords: here list combined list of topic & subtopics in lowercase.
-    - explain: here list appropriate give answer/explanation for the question asked.
-    - follow up: suggest possible home experiment which student can perform safely or want to dwell deeper into the area of related topics or else ask if they have any other questions.
-    If ${grade} & ${subject} are not selected prompt to select them and give answer to the point and make it interesting and understandable by a 5th grade student.
-    You should always respond with a JSON object with the following format:
-    {
-      "question": "${input}",
-      "answer": [{
-        "grade": "${grade}",
-        "subject": "${subject}",
-        "topic": [],
-        "subtopics":[],
-        "keywords": [],
-        "explain": "",
-        "followUp": ""
-      }]
-    }
-    You should end with asking if they have any follow up question on the topic.`;
-    const AI_key = import.meta.env.VITE_GEMINI_API_KEY;
-    const genAI = new GoogleGenerativeAI(AI_key);
-    const generationConfig = {
-        temperature: 0.9,
-        topK: 1,
-        topP: 1,
-        maxOutputTokens: 2048,
-    };
-    const safetySettings = [
-        {
-            category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-        },
-        {
-            category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-        },
-        {
-            category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-        },
-        {
-            category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
-        },
-    ];
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [followUp, setFollowUp] = useState([])
+    const [showUploadMessage, setShowUploadMessage] = useState(false);
+    const [rating, setRating] = useState(0);
 
-    //fetch data through Gemini API
     const fetchData = async () => {
+        const response = await generateResponse(input, subject, grade);
+        console.log(response);
+        const text = await response;
+        let responseObject;
         try {
-            const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-            const prompt = converstion;
-            const chat = model.startChat({
-                generationConfig,
-                safetySettings,
-                history: [],
-            });
-            const result = await chat.sendMessage(prompt);
-            const response = await result.response;
-            const text = await response.text();
-
-            let responseObject;
-            try {
-                responseObject = JSON.parse(text);
-            } catch (jsonError) {
-                throw new Error(`Failed to parse JSON response: ${jsonError.message}`);
-            }
-
-            const explainText = responseObject.answer[0].explain;
-            const followUpText = responseObject.answer[0].followUp;
-
-            setApiData({ topic: responseObject.answer[0].topic, subtopics: responseObject.answer[0].subtopics, keywords: responseObject.answer[0].keywords });
-
-            const userMessage = { type: 'user', text: input };
-            const botMessage = { type: 'bot', text: explainText };
-            setChatHistory((prev) => [userMessage, botMessage, ...prev]);
+            responseObject = JSON.parse(text);
+        } catch (jsonError) {
+            console.log(response);
             setLoading(false);
-            setInput("");
+            throw new Error(`Failed to parse JSON response: ${jsonError.message}`);
 
-        } catch (error) {
-            console.error('Error fetching data:', error.message || error);
-            setLoading(false);
         }
-    };
+
+
+        const explainText = responseObject.answer[0].explain;
+        const followUpText = responseObject.answer[0].followUp;
+
+        setApiData({ topic: responseObject.answer[0].topic, subtopics: responseObject.answer[0].subtopics, keywords: responseObject.answer[0].keywords });
+
+        const userMessage = { type: 'user', text: input };
+        const botMessage = { type: 'bot', text: explainText };
+        setChatHistory((prev) => [userMessage, botMessage, ...prev]);
+        const followupMessage = { type: 'bot', text: followUpText };
+        // setFollowUp((prev) => [followupMessage, ...prev])
+        setLoading(false);
+        setInput("");
+    }
 
     const toggleSpeech = (index) => {
         if (currentPlayingIndex === index) {
@@ -166,9 +109,9 @@ const ChatBot = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!input.trim()) return;
-        const userMessage = { type: 'user', text: input };
-        // setChatHistory((prev) =>
-        //     [userMessage, ...prev]); // Newest messages at the top
+        // setFollowUp([])
+        // const userMessage = { type: 'user', text: input };
+        // setChatHistory((prev) => [userMessage, ...prev]); // Newest messages at the top
         setLoading(true);
         fetchData();
     };
@@ -180,7 +123,7 @@ const ChatBot = () => {
         A.forEach(item => {
             for (let key in B) {
                 if (B[key].includes(item)) {
-                    // console.log(item)
+                    console.log(item)
                     if (!result[key]) {
                         result[key] = { count: 0, items: [] };
                     }
@@ -189,7 +132,7 @@ const ChatBot = () => {
                 }
             }
         });
-        // console.log(A, B)
+        console.log(A, B)
         return Object.entries(result).sort((a, b) => b[1].count - a[1].count);
     };
 
@@ -204,12 +147,12 @@ const ChatBot = () => {
         }
         return (
             <div>
-                <h1 className="font-bold">List of related Simulations</h1>
-                <div className="flex flex-wrap gap-1 justify-center">
+                <p className="font-bold text-xs md:text-sm">{statement}</p>
+                <div className="flex flex-wrap gap-1 justify-center ">
                     {sortedResults.map(([key, value]) => (
                         <div key={key} >
 
-                            <a href={`/visualpage/:${key}`} rel="noopener noreferrer" target=" _blank" className="bg-cyan-600 hover:bg-cyan-700 px-3  rounded-full text-white/90 text-xs">{getName(key)}</a>
+                            <a href={`/visualpage/:${key}`} rel="noopener noreferrer" target=" _blank" className="bg-cyan-600 hover:bg-cyan-700 px-3 rounded-full text-white/90 text-xs">{getName(key)}</a>
 
                             {/* <button className="bg-cyan-600 hover:bg-cyan-700 px-3 py-1 rounded-full text-white/90 text-xs" onClick={() => (window.open(`https://effectuall.github.io/Simulations/${sortedResults[0][0]}`, '_blank'), console.log('pop'))}>
                                 {getName(key)}
@@ -221,41 +164,59 @@ const ChatBot = () => {
 
             </div>
         );
+    }
+    const handleClearMessages = () => {
+        setChatHistory([])
+        setApiData(null)
     };
+
     return (
-        <div className="container mx-auto md:w-3/4 w-full p-6 bg-gray-100 rounded-lg shadow-lg flex flex-col h-[650px]">
-            <h1 className="text-2xl font-bold mb-4 text-center">THE STEM MASTER</h1>
-            <div className="chat-history p-4 bg-white rounded shadow flex-1 overflow-y-auto">
-                {chatHistory.map((msg, index) => (
-                    <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'} mb-2`}>
-                        <div className={`flex p-2 rounded-lg shadow ${msg.type === 'user' ? 'bg-cyan-700 text-white' : 'bg-gray-300 text-black'}`}>
-                            <ReactMarkdown>{msg.text}</ReactMarkdown>
-                            {msg.type === 'bot' && (
-                                <button onClick={() => toggleSpeech(index)} className="bg-gray-300 ml-2 ">
-                                    {isPlaying && currentPlayingIndex === index ? <FaPause /> : <FaPlay />}
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                ))}
+        <div className="container mx-auto  w-full p-0 md:p-6 bg-gray-100 rounded-lg shadow-lg flex flex-col h-screen max-h-full relative ">
+            <div className="flex flex-row gap-4 mb-1 md:mb-3 text-center items-center justify-center">
+                <h1 className="text-xl md:text-3xl font-bold  text-gray-800">THE STEM MASTER</h1>
+                <button className="p-4">  <FaRotateLeft onClick={() => window.location.reload()} /></button>
 
             </div>
-            <div className="text-center items-center">
-                {apiData === null ? (
-                    <p className="text-sm">List of related Simulations</p>
-                ) : (
-                    SortedResultsList(apiData.keywords)
-                )}
+
+            <div className="flex-1 overflow-y-auto rounded-lg p-0 md:p-4 mb-48 md:mb-64">
+                <div className="chat-history">
+                    {chatHistory.map((msg, index) => (
+                        <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'} mb-2 md:mb-3 px-2 md:px-4`}>
+                            <div className={`flex-row p-1 md:p-3 text-left rounded-lg shadow-md ${msg.type === 'user' ? 'bg-cyan-700 text-white' : 'bg-gray-300 text-black'} text-xs md:text-sm`}>
+                                <ReactMarkdown>{msg.text}</ReactMarkdown>
+                                {/* {msg.type === 'bot' && <ReactMarkdown>{followUp}</ReactMarkdown>} */}
+                            </div>
+                            {msg.type === 'user' && (
+                                <div>  <button onClick={() => toggleSpeech(index)} className="ml-2 p-1 md:p-3 text-gray-600">
+                                    {isPlaying && currentPlayingIndex === index ? <FaPause /> : <FaPlay />}
+                                </button>
+                                    {/* <button onClick={() => (console.log(followUp))} className="ml-2 text-gray-600">
+              <FaQ /> 
+            </button> */}
+                                </div>
+
+                            )}
+                        </div>
+                    ))}
+                </div>
+                <div className="text-center items-center">
+                    {apiData === null ? (
+                        <p className="text-sm">{statement}</p>
+                    ) : (
+                        SortedResultsList(apiData.keywords)
+                    )}
+                </div>
             </div>
-            <div className="input-area p-4 bg-gray-100 rounded-t-lg shadow-lg flex-none">
-                <form onSubmit={handleSubmit} className="flex flex-col items-center">
-                    <div className="flex flex-col md:flex-row w-full md:space-x-4 mb-4">
+
+            <div className="input-area fixed bottom-0 left-0 w-full bg-gray-100 border-t border-gray-300 p-4 ">
+                <form onSubmit={handleSubmit} className="flex flex-col w-full p-1 md:p-4 max-w-4xl mx-auto shadow-lg mb-1 md:mb-6">
+                    <div className="flex flex-wrap gap-4 mb-4">
                         <div className="flex-1">
-                            <label htmlFor="grade" className="form-label block mb-1">
+                            <label htmlFor="grade" className="form-label block mb-1 text-gray-700">
                                 Grade
                             </label>
                             <select
-                                className="form-select w-full p-2 border rounded"
+                                className="form-select w-full p-2 border rounded bg-white"
                                 id="grade"
                                 value={grade}
                                 onChange={(e) => setGrade(e.target.value)}
@@ -266,11 +227,11 @@ const ChatBot = () => {
                             </select>
                         </div>
                         <div className="flex-1">
-                            <label htmlFor="subject" className="form-label block mb-1">
+                            <label htmlFor="subject" className="form-label block mb-1 text-gray-700">
                                 Subject
                             </label>
                             <select
-                                className="form-select w-full p-2 border rounded"
+                                className="form-select w-full p-2 border rounded bg-white"
                                 id="subject"
                                 value={subject}
                                 onChange={(e) => setSubject(e.target.value)}
@@ -283,42 +244,54 @@ const ChatBot = () => {
                             </select>
                         </div>
                     </div>
-                    <div className="flex flex-col w-full mb-4">
-                        <label htmlFor="question" className="form-label block mb-1">
-                            Question
-                        </label>
-                        <div className="relative w-full">
+
+                    <div className="flex flex-col md:flex-row items-center">
+                        <div className="flex-1 w-full md:w-3/4 relative flex items-center space-x-2">
                             <input
                                 type="text"
-                                className="form-input w-full p-2 border rounded"
+                                className="form-input w-full p-2 border rounded bg-white"
                                 id="question"
                                 placeholder="Type your question"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                             />
-                            <button
-                                type="button"
-                                className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                                onClick={startDictation}
-                            >
-                                {recording ? (
-                                    <FaMicrophoneSlash className="text-red-500" />
-                                ) : (
-                                    <FaMicrophone className="text-green-500" />
-                                )}
-                            </button>
+                            <div className="flex items-center space-x-1 md:space-x-2">
+                                <button
+                                    type="button"
+                                    onClick={handleClearMessages}
+                                    className="text-gray-600 hover:text-gray-900"
+                                >
+                                    <FaArrowsRotate />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={startDictation}
+                                    className="text-gray-600 hover:text-gray-900"
+                                >
+                                    {recording ? <FaMicrophoneSlash /> : <FaMicrophone />}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="text-gray-600 hover:text-gray-900"
+                                >
+                                    <FaUpload />
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="text-gray-600 hover:text-gray-900"
+                                >
+                                    {loading ? <FaSpinner className="spinner" /> : <FaSearch />}
+                                </button>
+                            </div>
                         </div>
+                        {showUploadMessage && <p className="text-sm text-gray-500 ml-4">Feature will be added soon!</p>}
                     </div>
-                    <button
-                        type="submit"
-                        className="px-6 py-2 bg-cyan-700 text-white rounded hover:bg-cyan-600"
-                        disabled={loading}
-                    >
-                        {loading ? "Loading..." : "Ask"}
-                    </button>
                 </form>
             </div>
         </div>
+
+
     );
 };
 
