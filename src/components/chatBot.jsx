@@ -152,7 +152,8 @@ function ChatBot() {
                     {sortedResults.map(([key, value]) => (
                         <div key={key} >
 
-                            <a href={`/visualpage/:${key}`} rel="noopener noreferrer" target=" _blank" className="bg-cyan-600 hover:bg-cyan-700 px-3 rounded-full text-white/90 text-xs">{getName(key)}</a>
+                            {key === "LoadModel" ? (<a href={`/visualpage/:${key}`} rel="noopener noreferrer" target=" _blank" className="bg-cyan-600 hover:bg-cyan-700 px-3 rounded-full text-white/90 text-xs">{key}</a>) : <a href={`/visualpage/:${key}`} rel="noopener noreferrer" target=" _blank" className="bg-cyan-600 hover:bg-cyan-700 px-3 rounded-full text-white/90 text-xs">{getName(key)}</a>}
+
 
                             {/* <button className="bg-cyan-600 hover:bg-cyan-700 px-3 py-1 rounded-full text-white/90 text-xs" onClick={() => (window.open(`https://effectuall.github.io/Simulations/${sortedResults[0][0]}`, '_blank'), console.log('pop'))}>
                                 {getName(key)}
