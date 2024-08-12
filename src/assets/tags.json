@@ -460,5 +460,14 @@
         "atomic structure",
         "quantum mechanics",
         "quantum physics"
+    ],
+    "LoadModel": [
+        "molecules",
+        "molecular structure",
+        "methane",
+        "ethane",
+        "propane",
+        "benzene",
+        "chemistry"
     ]
 }
