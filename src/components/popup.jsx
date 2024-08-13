@@ -53,7 +53,10 @@ const Chatbot = () => {
     <div className="fixed bottom-16 right-5 bg-white border shadow-lg rounded-lg p-4 w-80 h-96 flex flex-col">
       <h1>Want to visit STEM 3D Simulations?</h1>
       <p className='text-sm text-gray-400'>Type a topic and we will redirect to the related simulations or select the below options.</p>
-      <div className='flex gap-2'><Link to="/chatbot"><button>AI chatBot</button></Link> <Link to="/simulations"><button>3D Visualization</button></Link></div>
+      <div className='flex gap-2'>
+        <Link to="/chatbot"><button className="bg-cyan-500 text-white p-2 rounded ml-2">AI chatBot</button></Link>
+        <Link to="/simulations"><button className="bg-cyan-500 text-white p-2 rounded ml-2">3D Visualization</button></Link>
+      </div>
       <div className="flex-1 overflow-y-auto">
         {searchInput.length > 3 && (
           filteredResults.map((title, i) => (

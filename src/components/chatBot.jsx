@@ -171,6 +171,9 @@ function ChatBot() {
         setApiData(null)
     };
 
+    const startUpload = () => {
+        console.log('upload')
+    }
     return (
         <div className="container mx-auto  w-full p-0 md:p-6 bg-gray-100 rounded-lg shadow-lg flex flex-col h-screen max-h-full relative ">
             <div className="flex flex-row gap-4 mb-1 md:mb-3 text-center items-center justify-center">
@@ -260,30 +263,32 @@ function ChatBot() {
                                 <button
                                     type="button"
                                     onClick={handleClearMessages}
-                                    className="text-gray-600 hover:text-gray-900"
+                                    className="text-gray-600 hover:text-gray-900  p-2"
                                 >
                                     <FaArrowsRotate />
                                 </button>
                                 <button
                                     type="button"
                                     onClick={startDictation}
-                                    className="text-gray-600 hover:text-gray-900"
+                                    className="text-gray-600 hover:text-gray-900  p-2"
                                 >
                                     {recording ? <FaMicrophoneSlash /> : <FaMicrophone />}
                                 </button>
                                 <button
                                     type="button"
-                                    className="text-gray-600 hover:text-gray-900"
+                                    className="text-gray-600 hover:text-gray-900 p-2"
+                                    onClick={startUpload}
                                 >
                                     <FaUpload />
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="text-gray-600 hover:text-gray-900"
+                                    className="text-gray-600 hover:text-gray-900  p-2"
                                 >
                                     {loading ? <FaSpinner className="spinner" /> : <FaSearch />}
                                 </button>
+
                             </div>
                         </div>
                         {showUploadMessage && <p className="text-sm text-gray-500 ml-4">Feature will be added soon!</p>}
