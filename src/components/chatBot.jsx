@@ -175,7 +175,7 @@ function ChatBot() {
         console.log('upload')
     }
     return (
-        <div className="container mx-auto  w-full p-0 md:p-6 bg-gray-100 rounded-lg shadow-lg flex flex-col h-screen max-h-full relative ">
+        <div className="container mx-auto  w-full p-0 md:p-6 bg-gray-100 rounded-lg shadow-lg flex flex-col h-screen max-h-[730px] relative ">
             <div className="flex flex-row gap-4 mb-1 md:mb-3 text-center items-center justify-center">
                 <h1 className="text-xl md:text-3xl font-bold  text-gray-800">THE STEM MASTER</h1>
                 <button className="p-4">  <FaRotateLeft onClick={() => window.location.reload()} /></button>
@@ -191,8 +191,8 @@ function ChatBot() {
                                 {/* {msg.type === 'bot' && <ReactMarkdown>{followUp}</ReactMarkdown>} */}
                             </div>
                             {msg.type === 'user' && (
-                                <div>  <button onClick={() => toggleSpeech(index)} className="ml-2 p-1 md:p-3 text-gray-600">
-                                    {isPlaying && currentPlayingIndex === index ? <FaPause /> : <FaPlay />}
+                                <div>  <button onClick={() => toggleSpeech(index + 1)} className="ml-2 p-1 md:p-3 text-gray-600">
+                                    {isPlaying && currentPlayingIndex === index + 1 ? <FaPause /> : <FaPlay />}
                                 </button>
                                     {/* <button onClick={() => (console.log(followUp))} className="ml-2 text-gray-600">
               <FaQ /> 
@@ -290,6 +290,7 @@ function ChatBot() {
                                 </button>
 
                             </div>
+
                         </div>
                         {showUploadMessage && <p className="text-sm text-gray-500 ml-4">Feature will be added soon!</p>}
                     </div>

@@ -20,7 +20,8 @@ export default function RootLayout() {
       routerReplace={(to) => navigate(to, { replace: true })}
       publishableKey={PUBLISHABLE_KEY}
     >
-      <header id="header" className="bg-[#164F63] shadow-md ">
+      <header id="header" className="fixed top-0 left-0 w-full bg-[#164F63] shadow-md z-10">
+
         <div className="container  mx-auto flex items-center justify-between p-4">
           <div id="logo" className="flex items-center">
             <h1 className="text-2xl font-bold">
@@ -68,7 +69,7 @@ export default function RootLayout() {
           </div>
         </div>
       </header>
-      <main className="bg-slate-50 items-center text-center text-slate-900">
+      <main className="bg-slate-50 items-center text-center text-slate-900 pt-16">
         <Outlet />
 
       </main>
